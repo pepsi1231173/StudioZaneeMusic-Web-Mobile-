@@ -1,0 +1,46 @@
+﻿@model DuAnBai3.Models.Product
+
+@{
+    ViewData["Title"] = "Chi Tiết Sản Phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2 class="text-center mt-4 mb-4 text-info">Chi Tiết Sản Phẩm</h2>
+
+<div class="container">
+    <div class="mb-3">
+        <strong>Tên:</strong> @Model.Name
+    </div>
+    <div class="mb-3">
+        <strong>Giá:</strong> @($"{Model.Price:N0} đ")
+    </div>
+    <div class="mb-3">
+        <strong>Mô tả:</strong> @Model.Description
+    </div>
+    <div class="mb-3">
+        <strong>Danh mục:</strong> @Model.Category?.Name
+    </div>
+    <div class="mb-3">
+        <strong>Hình ảnh:</strong>
+        <br />
+        <img src="@Model.ImageUrl" alt="Ảnh sản phẩm" width="200" class="img-thumbnail" />
+    </div>
+    <div class="mb-3">
+        <strong>Trạng thái:</strong>
+        @if (Model.IsUnderMaintenance)
+        {
+            <span class="badge bg-warning text-dark">Đang bảo trì</span>
+        }
+        else if (Model.IsRented)
+        {
+            <span class="badge bg-danger">Đang thuê</span>
+        }
+        else
+        {
+            <span class="badge bg-success">Sẵn sàng</span>
+        }
+    </div>
+
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">✏️ Sửa</a>
+    <a asp-action="Index" class="btn btn-secondary">🔙 Quay lại</a>
+</div>

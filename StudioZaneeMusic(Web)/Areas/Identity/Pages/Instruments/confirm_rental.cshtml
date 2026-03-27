@@ -1,0 +1,16 @@
+﻿@page
+@model DuAnBai3.Areas.Identity.Pages.Instruments.ConfirmModel
+@{
+    ViewData["Title"] = "Xác nhận thuê nhạc cụ";
+}
+<form method="post">
+    <input type="text" asp-for="Input.CustomerName" placeholder="Tên khách hàng" class="form-control" />
+    <input type="text" asp-for="Input.CustomerPhone" placeholder="Số điện thoại" class="form-control" />
+    <input type="email" asp-for="Input.CustomerEmail" placeholder="Email" class="form-control" />
+    <input type="date" asp-for="Input.RentalDate" class="form-control" />
+
+    <input type="hidden" asp-for="Input.TotalPrice" />
+    <input type="hidden" name="Input.SelectedInstruments" value='["@Html.Raw(Json.Serialize(Model.Input.SelectedInstruments))"]' />
+
+    <button type="submit" class="btn btn-primary">Xác nhận và tạo hóa đơn</button>
+</form>

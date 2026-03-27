@@ -1,0 +1,136 @@
+﻿@model List<DuAnBai3.Models.Booking>
+@{
+    ViewData["Title"] = "Lịch sử đơn đã hoàn tất";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    body {
+        background: url('/images/background.jpg') no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .booking-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,.1);
+        border-left: 6px solid transparent;
+        color: #000; 
+    }
+
+
+        .booking-card.completed {
+            border-color: #6f42c1;
+        }
+
+    .status {
+        font-weight: bold;
+        padding: 4px 10px;
+        border-radius: 8px;
+    }
+
+        .status.completed {
+            background: #6f42c1;
+            color: #fff;
+        }
+
+    .btn-outline-secondary {
+        border-color: #6f42c1;
+        color: #6f42c1;
+    }
+
+        .btn-outline-secondary:hover {
+            background-color: #6f42c1;
+            color: white;
+        }
+
+    h2, h4 {
+        color: white;
+    }
+
+</style>
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">🗂️ Lịch sử đơn đã hoàn tất</h2>
+
+    <form method="get" asp-action="History" class="mb-4">
+        <label class="form-check-label text-white">
+            <input type="checkbox" name="includeArchived" class="form-check-input me-2" value="true" onchange="this.form.submit()"
+            @(ViewBag.IncludeArchived != null && (bool)ViewBag.IncludeArchived ? "checked" : "") />
+            Hiện đơn đã lưu trữ
+        </label>
+    </form>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning text-center">Không có đơn nào!</div>
+    }
+
+    @foreach (var b in Model)
+    {
+        var endTime = b.StartTime.Add(TimeSpan.FromHours(b.RentalDuration));
+        var dateStr = b.RentalDate.ToString("dd/MM/yyyy");
+        var timeStr = b.StartTime.ToString(@"hh\:mm");
+        var endStr = endTime.ToString(@"hh\:mm");
+        var priceStr = b.Price.ToString("N0");
+
+        <div class="booking-card completed">
+            <div class="row gy-2 gx-3">
+                <div class="col-md-6">
+                    <p><strong>Mã đơn:</strong> #@b.DailyBookingNumber.ToString("D4")</p>
+                    <p><strong>Phòng:</strong> @b.RoomId</p>
+                    <p><strong>Khách hàng:</strong> @b.CustomerName</p>
+                    <p><strong>Ngày thuê:</strong> @dateStr</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Thời lượng:</strong> @b.RentalDuration giờ</p>
+                    <p><strong>Giờ bắt đầu:</strong> @timeStr</p>
+                    <p><strong>Giờ kết thúc:</strong> @endStr</p>
+                    <p><strong>Đơn giá:</strong> @priceStr VNĐ</p>
+                    <p><strong>Trạng thái:</strong> <span class="status completed">Hoàn tất</span></p>
+                </div>
+                <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+                    @if (!b.IsArchived)
+                    {
+                        <form asp-action="Archive" asp-route-id="@b.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-secondary" onclick="return confirm('Ẩn đơn này khỏi lịch sử?')">
+                                📂 Lưu trữ
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="Restore" asp-route-id="@b.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Hiện lại đơn này trong lịch sử?')">
+                                🔄 Hiện lại
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <a href="/Admin/Booking/Room" class="btn btn-secondary mt-4">🔙 Quay lại</a>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination mt-3">
+            @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == (int)ViewBag.CurrentPage ? "active" : "")">
+                    <a class="page-link"
+                       asp-action="History"
+                       asp-route-page="@i"
+                       asp-route-includeArchived="@(ViewBag.IncludeArchived ?? false)">
+                        @i
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
