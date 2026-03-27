@@ -1,0 +1,64 @@
+﻿@model DuAnBai3.Models.Product
+
+@{
+    ViewData["Title"] = "Thêm sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2 class="text-center text-warning mt-4 mb-4">➕ Thêm sản phẩm mới</h2>
+
+<div class="container">
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div class="card shadow p-4 bg-light">
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label fw-bold"></label>
+                <input asp-for="Name" class="form-control" placeholder="Nhập tên sản phẩm..." />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Price" class="form-label fw-bold"></label>
+                <input asp-for="Price" type="number" class="form-control" min="0" step="1000" placeholder="Nhập giá..." />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label fw-bold"></label>
+                <textarea asp-for="Description" class="form-control" rows="3" placeholder="Mô tả..."></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Danh mục</label>
+                <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId">
+                    <option value="">-- Chọn danh mục --</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Ảnh sản phẩm</label>
+                <input type="file" name="ImageFile" class="form-control" accept="image/*" />
+            </div>
+
+            <div class="form-check mb-3">
+                <input asp-for="IsUnderMaintenance" class="form-check-input" />
+                <label class="form-check-label" asp-for="IsUnderMaintenance">Đang bảo trì</label>
+            </div>
+
+            <div class="form-check mb-3">
+                <input asp-for="IsRented" class="form-check-input" />
+                <label class="form-check-label" asp-for="IsRented">Đang thuê</label>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-secondary">⬅️ Quay lại</a>
+                <button type="submit" class="btn btn-success">💾 Lưu sản phẩm</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

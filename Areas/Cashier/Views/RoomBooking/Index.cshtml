@@ -1,0 +1,255 @@
+﻿@model List<DuAnBai3.Models.Booking>
+
+@{
+    ViewData["Title"] = "Danh sách hóa đơn";
+    Layout = "~/Areas/Cashier/Views/Shared/_CashierLayout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            background: url('/images/room_rental.gif') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .invoice-box {
+            background-color: rgba(255, 255, 255, 1);
+            padding: 30px;
+            border-radius: 10px;
+            width: 80%;
+            margin: 50px auto;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            page-break-inside: avoid;
+            border: 4px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        /* Viền màu theo trạng thái */
+        .status-paid_cash {
+            border-color: #27ae60; /* xanh lá */
+        }
+
+        .status-paid_bank {
+            border-color: #e67e22; /* cam */
+        }
+
+        .status-pending, .status-booked {
+            border-color: #f1c40f; /* vàng */
+        }
+
+        .status-other {
+            border-color: #95a5a6; /* xám */
+        }
+
+        .invoice-box table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .invoice-box table th, .invoice-box table td {
+                padding: 8px;
+                border: 1px solid #ddd;
+            }
+
+            .invoice-box table th {
+                background-color: #f7f7f7;
+                text-align: left;
+                width: 35%;
+            }
+
+            .invoice-box table td {
+                text-align: right;
+            }
+
+        .invoice-box h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .print-btn {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+            .print-btn button {
+                background-color: #3498db;
+                color: white;
+                padding: 10px 18px;
+                border: none;
+                border-radius: 8px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+
+                .print-btn button:hover {
+                    background-color: #2980b9;
+                }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+            .action-buttons form button {
+                padding: 8px 14px;
+                border: none;
+                border-radius: 5px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+
+        .cash-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .bank-btn {
+            background-color: #e67e22;
+            color: white;
+        }
+
+        @@media print {
+            .print-btn, .action-buttons
+
+        {
+            display: none;
+        }
+
+        }
+    </style>
+</head>
+<body>
+
+    <div class="print-btn">
+        <button onclick="window.print()">🖨 In tất cả hóa đơn</button>
+    </div>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success text-center" role="alert">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @foreach (var booking in Model)
+    {
+        var extraGuests = Math.Max(0, booking.GuestCount - 4);
+        var extraFee = extraGuests * 20000;
+        var pricePerHour = 100000;
+        var discountPrice = 70000;
+        var discountHours = booking.RentalDuration >= 3 ? 1 : 0;
+        var normalHours = booking.RentalDuration - discountHours;
+        var finalPrice = (normalHours * pricePerHour) + (discountHours * discountPrice) + extraFee;
+
+        var statusClass = booking.Status switch
+        {
+            "paid_cash" => "status-paid_cash",
+            "paid_bank" => "status-paid_bank",
+            "pending" => "status-pending",
+            "booked" => "status-pending",
+            _ => "status-other"
+        };
+
+        <div class="invoice-box @statusClass">
+            <h2>🧾 Hóa Đơn Đặt Phòng</h2>
+            <p><strong>Mã đơn:</strong> #@booking.DailyBookingNumber.ToString("D4")</p>
+            <table>
+                <tr><th>Tên khách hàng</th><td>@booking.CustomerName</td></tr>
+                <tr><th>SĐT</th><td>@booking.CustomerPhone</td></tr>
+                <tr><th>Email</th><td>@booking.CustomerEmail</td></tr>
+                <tr><th>Ngày thuê</th><td>@booking.RentalDate.ToString("yyyy-MM-dd")</td></tr>
+                <tr><th>Giờ bắt đầu</th><td>@booking.StartTime.ToString(@"hh\:mm")</td></tr>
+                <tr><th>Thời gian thuê</th><td>@booking.RentalDuration giờ</td></tr>
+                <tr><th>Số khách</th><td>@booking.GuestCount khách</td></tr>
+                <tr><th>Phòng</th><td>@booking.RoomId</td></tr>
+                <tr>
+                    <th>Giá chi tiết</th>
+                    <td>
+                        @normalHours giờ x @pricePerHour.ToString("N0") VNĐ<br />
+                        @discountHours giờ KM x @discountPrice.ToString("N0") VNĐ
+                    </td>
+                </tr>
+                @if (extraGuests > 0)
+                {
+                    <tr>
+                        <th>Phụ thu khách</th>
+                        <td>@extraGuests khách x 20.000 = <b>@extraFee.ToString("N0") VNĐ</b></td>
+                    </tr>
+                }
+                <tr>
+                    <th class="text-danger">Tổng tiền</th>
+                    <td class="text-danger"><b>@finalPrice.ToString("N0") VNĐ</b></td>
+                </tr>
+                <tr>
+                    <th>Trạng thái</th>
+                    <td>
+                        @if (booking.Status == "paid_cash")
+                        {
+                            <span class="text-success"><b>Đã thanh toán (Tiền mặt)</b></span>
+                        }
+                        else if (booking.Status == "paid_bank")
+                        {
+                            <span class="text-success"><b>Đã thanh toán (Chuyển khoản)</b></span>
+                        }
+                        else if (booking.Status == "pending" || booking.Status == "booked")
+                        {
+                            <span class="text-warning"><b>Chờ thanh toán</b></span>
+                        }
+                        else
+                        {
+                            <span class="text-secondary"><b>@booking.Status</b></span>
+                        }
+                    </td>
+                </tr>
+            </table>
+
+            @if (booking.Status == "pending" || booking.Status == "booked")
+            {
+                <div class="action-buttons">
+                    <form method="post" asp-action="PayByCash" asp-controller="RoomBooking" asp-area="Cashier" asp-route-bookingId="@booking.Id" onsubmit="return confirm('Bạn có chắc chắn đã nhận tiền mặt và muốn xác nhận thanh toán?');">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="cash-btn">💵 Thanh toán tiền mặt</button>
+                    </form>
+                    <form method="post" asp-action="PayByBankTransfer" asp-controller="RoomBooking" asp-area="Cashier" asp-route-bookingId="@booking.Id" onsubmit="return confirm('Bạn có chắc chắn đã xác nhận chuyển khoản?');">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="bank-btn">💳 Chuyển khoản</button>
+                    </form>
+                </div>
+            }
+
+        </div>
+    }
+</body>
+</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/bookingHub")
+        .build();
+
+    connection.on("BookingStatusUpdated", function (bookingId, status) {
+        const box = document.getElementById(`booking-${bookingId}`);
+        if (!box) return;
+
+        box.classList.remove("status-paid_cash", "status-paid_bank", "status-pending", "status-other");
+
+        if (status === "paid_cash") {
+            box.classList.add("status-paid_cash");
+            box.querySelector("td:last-child").innerHTML = "<span class='text-success'><b>Đã thanh toán (Tiền mặt)</b></span>";
+        }
+        else if (status === "paid_bank") {
+            box.classList.add("status-paid_bank");
+            box.querySelector("td:last-child").innerHTML = "<span class='text-success'><b>Đã thanh toán (Chuyển khoản)</b></span>";
+        }
+    });
+
+    connection.start();
+</script>

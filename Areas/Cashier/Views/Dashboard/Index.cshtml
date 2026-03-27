@@ -1,0 +1,86 @@
+﻿@{
+    Layout = "~/Areas/Cashier/Views/Shared/_CashierLayout.cshtml";
+    ViewData["Title"] = "Trang chính";
+}
+<style>
+    .service-box {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .service-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+
+    </style>
+<h1 class="text-info mb-4">🎵 Xin chào, Thu ngân!</h1>
+<p class="lead">Chào mừng bạn đến giao diện quản lý thanh toán tại quầy của <strong>Zanee Studio</strong>.</p>
+
+<div class="service-container row g-4">
+
+    <div class="col-md-6 col-xl-3">
+        <div class="service-box service-room bg-primary text-white shadow-sm text-center py-4 rounded cursor-pointer"
+             data-href="/Cashier/RoomBooking/Index">
+            <h3>🏠 Đơn đặt phòng</h3>
+        </div>
+    </div>
+
+
+
+    <div class="col-md-6 col-xl-3">
+        <div class="service-box service-instrument bg-warning text-dark shadow-sm text-center py-4 rounded cursor-pointer"
+             data-href="/Cashier/Instrument/Index">
+            <h3>🎸 Đơn thuê nhạc cụ</h3>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="service-box service-recording bg-danger text-white shadow-sm text-center py-4 rounded cursor-pointer"
+             data-href="/Cashier/Recording/Index">
+            <h3>🎙️ Đơn thu âm</h3>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="service-box service-music bg-success text-white shadow-sm text-center py-4 rounded cursor-pointer"
+             data-href="/Cashier/Music/Index">
+            <h3>🎼 Đơn làm nhạc</h3>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="service-box bg-dark text-white shadow-sm text-center py-4 rounded cursor-pointer"
+             data-href="/Cashier/Invoice/Index">
+            <h3>🧾 Xuất hóa đơn</h3>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="service-box bg-secondary text-white shadow-sm text-center py-4 rounded cursor-pointer"
+             data-href="/Cashier/Invoice/History">
+            <h3>📚 Lịch sử thanh toán</h3>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="service-box bg-info text-white shadow-sm text-center py-4 rounded cursor-pointer"
+             data-href="/Identity/Account/Manage">
+            <h3>👤 Tài khoản của tôi</h3>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.service-box').forEach(box => {
+            box.addEventListener('click', () => {
+                const url = box.getAttribute('data-href');
+                if (url) {
+                    window.location.href = url;
+                }
+            });
+        });
+    </script>
+}

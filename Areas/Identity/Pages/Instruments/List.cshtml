@@ -1,0 +1,345 @@
+﻿@page
+@model DuAnBai3.Areas.Identity.Pages.Instruments.ListModel
+@{
+    ViewData["Title"] = "Thuê Nhạc Cụ";
+    Layout = "~/Areas/Identity/Pages/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet" />
+
+<style>
+    h2 {
+        font-family: 'Lobster', cursive;
+        color: #FFD700;
+        text-shadow: 3px3px8px rgba(112,99,25,0.7);
+        font-size: 45px;
+    }
+
+    body {
+        background: url('/images/instru-rental.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: white;
+        font-family: 'Poppins',sans-serif;
+    }
+
+    .container {
+        background: rgba(84,83,83,0.91);
+        border-radius: 16px;
+        padding: 40px;
+        margin: 50px auto;
+        max-width: 900px;
+        text-align: center;
+    }
+
+    .form-control {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+    }
+
+    ::placeholder {
+        color: white !important;
+    }
+
+    .instrument-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .instrument-box {
+        width: 200px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 12px;
+        text-align: center;
+        padding: 15px;
+        margin: 10px 5px;
+        cursor: pointer;
+        position: relative;
+        transition: transform 0.2s, box-shadow 0.3s;
+    }
+
+        .instrument-box img {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .instrument-box p {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .instrument-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0px4px10px rgba(255,255,255,0.3);
+        }
+
+        .instrument-box.selected {
+            border: 2px solid #f1c40f;
+            background: rgba(241,196,15,0.2);
+        }
+
+        .instrument-box .checked {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #f1c40f;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: 0.2s;
+        }
+
+        .instrument-box.selected .checked {
+            opacity: 1;
+        }
+
+    .btn-clear {
+        margin-top: 20px;
+        background: #e74c3c;
+        border: none;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .form-group {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .instrument-box.maintenance::before {
+        content: "ĐANG BẢO TRÌ";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%) rotate(-45deg);
+        background: rgba(255,0,0,0.7);
+        color: white;
+        font-weight: bold;
+        padding: 4px 10px;
+        border-radius: 4px;
+    }
+
+    .instrument-box.rented::before {
+        content: "ĐÃ ĐƯỢC ĐẶT";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%) rotate(-45deg);
+        background: rgba(0,128,0,0.7);
+        color: white;
+        font-weight: bold;
+        padding: 4px 10px;
+        border-radius: 4px;
+    }
+</style>
+
+<div class="container">
+    <h2 class="mb-4">🎸 Thuê Nhạc Cụ 🎸</h2>
+
+    <form method="post" asp-area="Identity" asp-page="/Instruments/List" id="rentalForm" novalidate>
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3 text-start">
+            <label asp-for="Instrument.CustomerName" class="form-label">Họ và tên:</label>
+            <input asp-for="Instrument.CustomerName" class="form-control" placeholder="Nhập họ và tên" />
+            <span asp-validation-for="Instrument.CustomerName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3 text-start">
+            <label asp-for="Instrument.CustomerPhone" class="form-label">Số điện thoại:</label>
+            <input asp-for="Instrument.CustomerPhone" class="form-control" placeholder="Nhập số điện thoại" />
+            <span asp-validation-for="Instrument.CustomerPhone" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3 text-start">
+            <label asp-for="Instrument.CustomerEmail" class="form-label">Email:</label>
+            <input asp-for="Instrument.CustomerEmail" class="form-control" placeholder="Nhập email" />
+            <span asp-validation-for="Instrument.CustomerEmail" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3 text-start">
+            <label asp-for="Instrument.RentalDate" class="form-label">Ngày thuê:</label>
+            <input asp-for="Instrument.RentalDate"
+                   class="form-control"
+                   type="date"
+                   value="@Model.Instrument.RentalDate?.ToString("yyyy-MM-dd") ?? DateTime.Now.ToString(" yyyy-MM-dd")"
+                   min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            <span asp-validation-for="Instrument.RentalDate" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3 text-start">
+            <label for="instrumentType" class="form-label">Chọn loại nhạc cụ:</label>
+            <select id="instrumentType" class="form-control">
+                <option value="">Vui lòng chọn loại nhạc cụ</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.Name">@category.Name</option>
+                }
+            </select>
+        </div>
+
+        <div id="instrumentList" class="instrument-list"></div>
+
+        <div class="form-group">
+            <button type="button" id="clearSelection" class="btn-clear">Bỏ chọn tất cả</button>
+            <button type="submit" class="btn btn-warning btn-clear">🚀 Thuê ngay</button>
+        </div>
+
+        <div id="selectedInstrumentsContainer"></div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Lấy dữ liệu nhạc cụ từ model
+        const instrumentsData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.InstrumentsDict));
+        let selectedInstruments = [];
+
+        const instrumentTypeSelect = document.getElementById('instrumentType');
+        const instrumentListDiv = document.getElementById('instrumentList');
+        const clearButton = document.getElementById('clearSelection');
+        const selectedInstrumentsContainer = document.getElementById('selectedInstrumentsContainer');
+        const rentalDateInput = document.getElementById('Instrument_RentalDate');
+
+        // Render danh sách nhạc cụ theo category
+        function renderInstrumentList(items){
+            instrumentListDiv.innerHTML = '';
+            items.forEach(item => {
+                const box = document.createElement('div');
+                box.classList.add('instrument-box');
+                box.setAttribute('tabindex','0');
+                box.setAttribute('role','checkbox');
+                box.setAttribute('aria-checked', selectedInstruments.includes(item.Id) ? 'true' : 'false');
+
+                let imgSrc = item.Img?.trim() || "/images/products/default.jpg";
+
+                if(item.IsUnderMaintenance) box.classList.add('maintenance');
+                else if(item.IsRented) box.classList.add('rented');
+
+                box.innerHTML = `
+                    <img src="${imgSrc}" alt="${item.Name}" onerror="this.onerror=null;this.src='/images/products/default.jpg';">
+                    <p>${item.Name}</p>
+                    <p>${item.Price.toLocaleString('vi-VN')} đ</p>
+                    <div class="checked"><i class="fa fa-check"></i></div>
+                `;
+
+                // Chỉ cho phép chọn nếu không bảo trì và chưa thuê
+                if(!item.IsUnderMaintenance && !item.IsRented){
+                    box.addEventListener('click',()=> toggleSelection(item.Id, box));
+                    box.addEventListener('keydown', ev => {
+                        if(ev.key === ' ' || ev.key === 'Enter'){ ev.preventDefault(); toggleSelection(item.Id, box); }
+                    });
+                }
+
+                if(selectedInstruments.includes(item.Id)) box.classList.add('selected');
+
+                instrumentListDiv.appendChild(box);
+            });
+        }
+
+        function toggleSelection(id, box){
+            const idx = selectedInstruments.indexOf(id);
+            if(idx > -1){
+                selectedInstruments.splice(idx,1);
+                box.classList.remove('selected');
+                box.setAttribute('aria-checked','false');
+            } else {
+                selectedInstruments.push(id);
+                box.classList.add('selected');
+                box.setAttribute('aria-checked','true');
+            }
+            updateHiddenInputs();
+        }
+
+        function updateHiddenInputs(){
+            selectedInstrumentsContainer.innerHTML = '';
+            selectedInstruments.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'Instrument.SelectedInstruments';
+                input.value = id;
+                selectedInstrumentsContainer.appendChild(input);
+            });
+        }
+
+        // Bỏ chọn tất cả
+        clearButton.addEventListener('click',()=>{
+            selectedInstruments = [];
+            updateHiddenInputs();
+            document.querySelectorAll('.instrument-box.selected')
+                .forEach(el => {el.classList.remove('selected'); el.setAttribute('aria-checked','false');});
+        });
+
+        // Khi chọn loại nhạc cụ
+        instrumentTypeSelect.addEventListener('change', e => {
+            const category = e.target.value;
+            if(category && instrumentsData[category]?.length){
+                renderInstrumentList(instrumentsData[category]);
+            } else {
+                instrumentListDiv.innerHTML = '';
+            }
+        });
+
+        // Khi đổi ngày thuê
+        rentalDateInput.addEventListener('change', async () => {
+            const selectedDate = rentalDateInput.value;
+            if(!selectedDate) return;
+
+            // reset selection
+            selectedInstruments = [];
+            updateHiddenInputs();
+
+            // reset container và trạng thái box
+            instrumentListDiv.innerHTML = '';
+
+            try {
+                // gọi server lấy nhạc cụ Confirmed cho ngày mới
+                const response = await fetch(`/Identity/Instruments/GetInstrumentsStatus?date=${selectedDate}`);
+                const rentedIds = await response.json();
+
+                // cập nhật trạng thái nhạc cụ
+                for (const category in instrumentsData) {
+                    instrumentsData[category].forEach(item => {
+                        item.IsRented = rentedIds.includes(item.Id); // chỉ Confirmed
+                    });
+                }
+
+                // render danh sách theo category đang chọn
+                const currentCategory = instrumentTypeSelect.value;
+                if (currentCategory && instrumentsData[currentCategory]?.length) {
+                    renderInstrumentList(instrumentsData[currentCategory]);
+                }
+
+            } catch(err){
+                console.error("Không thể lấy trạng thái nhạc cụ:", err);
+            }
+        });
+
+
+
+        // Khởi tạo page lần đầu
+        document.addEventListener('DOMContentLoaded', () => {
+            const initialSelected = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Instrument.SelectedInstruments ?? new List<int>()));
+            selectedInstruments = Array.isArray(initialSelected) ? initialSelected : [];
+            const category = instrumentTypeSelect.value;
+            if(category && instrumentsData[category]?.length) renderInstrumentList(instrumentsData[category]);
+            updateHiddenInputs();
+        });
+    </script>
+}

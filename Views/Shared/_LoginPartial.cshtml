@@ -1,0 +1,66 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using DuAnBai3.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var role = user != null ? (await UserManager.GetRolesAsync(user)).FirstOrDefault() : "";
+}
+
+<ul class="navbar-nav ms-auto">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <a id="manage" class="nav-link text-light fw-bold"
+               asp-area="Identity"
+               asp-page="/Account/Manage/Index"
+               title="Quản lý tài khoản">
+                👋 Xin chào, @UserManager.GetUserName(User)! (@role)
+            </a>
+        </li>
+
+        @* Điều hướng nhanh theo vai trò *@
+        @if (role == "Admin")
+        {
+            <li class="nav-item">
+                <a class="nav-link text-warning fw-bold" asp-area="Admin" asp-controller="Homepage" asp-action="Dashboard">🏠 Admin</a>
+            </li>
+        }
+        else if (role == "Cashier")
+        {
+            <li class="nav-item">
+                <a class="nav-link text-info fw-bold" href="/Cashier">💰 Thu ngân</a>
+            </li>
+        }
+
+        <li class="nav-item">
+            <form asp-area="Identity" asp-page="/Account/Logout" method="post" asp-route-returnUrl="/">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-sm btn-danger nav-link text-white border-0">
+                    🚪 Đăng xuất
+                </button>
+            </form>
+
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-light fw-bold"
+               asp-area="Identity"
+               asp-page="/Account/Register"
+               asp-route-returnUrl="/">
+                📝 Đăng ký
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-light fw-bold"
+               asp-area="Identity"
+               asp-page="/Account/Login"
+               asp-route-returnUrl="/">
+                🔐 Đăng nhập
+            </a>
+        </li>
+    }
+</ul>

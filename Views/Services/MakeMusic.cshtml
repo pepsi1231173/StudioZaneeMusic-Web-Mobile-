@@ -1,0 +1,94 @@
+﻿@{
+    ViewData["Title"] = "Dịch vụ Làm nhạc";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<style>
+    body {
+        background: url('/images/rooms/micro.jpg') no-repeat center center fixed;
+        background-size: cover; /* giữ ảnh phủ full nền */
+        background-position: center center; /* căn giữa ảnh */
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        color: white;
+        position: relative;
+    }
+
+
+    /* Container nội dung lên trên overlay */
+    .contact-container {
+        position: relative;
+        z-index: 1; /* đảm bảo nằm trên lớp overlay */
+        margin: 50px auto;
+        max-width: 800px;
+        margin-top: 100px;
+        background: rgba(0, 0, 0, 0.75);
+        padding: 40px 30px;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+    }
+
+
+    h1 {
+        font-family: 'Lobster', cursive;
+        font-size: 42px;
+        text-align: center;
+        margin-bottom: 30px;
+        color: gold;
+        text-shadow: 0 0 10px #ffd700;
+    }
+
+    p, ul, li, h3 {
+        color: #eee;
+        font-size: 18px;
+        line-height: 1.6;
+    }
+
+    ul {
+        padding-left: 20px;
+    }
+
+    hr {
+        border-color: gold;
+        margin: 30px 0;
+    }
+
+    .custom-text {
+        text-align: center;
+        font-weight: bold;
+        font-size: 20px;
+        margin-top: 20px;
+        color: #ffd700;
+        text-shadow: 0 0 5px #ffcc00;
+    }
+</style>
+
+<h1>🎵 Dịch vụ Làm nhạc tại Zanee's Music Studio</h1>
+
+<p>
+    Bạn có ý tưởng âm nhạc, nhưng cần sự trợ giúp để biến nó thành bản nhạc hoàn chỉnh?
+    Dịch vụ làm nhạc chuyên nghiệp của chúng tôi sẽ đồng hành cùng bạn từ bước sáng tác, hòa âm phối khí cho đến sản xuất bản demo chất lượng cao.
+</p>
+
+<p>
+    Với đội ngũ nhạc sĩ, producer tài năng, giàu kinh nghiệm trong nhiều thể loại nhạc như Pop, Ballad, EDM, Rock, Jazz,...
+    chúng tôi cam kết mang đến cho bạn những sản phẩm âm nhạc độc đáo, sáng tạo và phù hợp nhất với phong cách cá nhân.
+</p>
+
+<h3>Chúng tôi cung cấp:</h3>
+<ul>
+    <li>Sáng tác nhạc theo yêu cầu</li>
+    <li>Phối khí & hòa âm</li>
+    <li>Thu âm và sản xuất demo</li>
+    <li>Tư vấn phong cách âm nhạc, lời bài hát</li>
+</ul>
+
+<p>
+    Hãy để âm nhạc của bạn được thể hiện một cách trọn vẹn và chuyên nghiệp nhất tại Zanee's Music Studio!
+</p>
+
+<a class="btn btn-warning" href="/Contact">Liên hệ để bắt đầu</a>
